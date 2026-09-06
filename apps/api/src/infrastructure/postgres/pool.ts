@@ -3,11 +3,18 @@ import { config } from "../../config/index.js";
 
 const { Pool } = pg;
 
+const useSsl =
+  config.nodeEnv === "production" ||
+  config.databaseUrl.includes("render.com") ||
+  config.databaseUrl.includes("dpg-") ||
+  config.databaseUrl.includes("sslmode=require");
+
 export const pool = new Pool({
   connectionString: config.databaseUrl,
+  ssl: useSsl ? { rejectUnauthorized: false } : false,
   max: 20,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 5000,
+  connectionTimeoutMillis: 10000,
 });
 
 pool.on("error", (err) => {

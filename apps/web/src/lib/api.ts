@@ -49,7 +49,7 @@ class ApiClient {
           return res.token;
         } catch (err) {
           console.error("Auto login error:", err);
-          return null;
+          throw err;
         } finally {
           this.authPromise = null;
         }
@@ -68,7 +68,11 @@ class ApiClient {
       endpoint.startsWith("/market/movers");
 
     if (!this.token && !isPublicEndpoint) {
-      await this.ensureAuthenticated();
+      try {
+        await this.ensureAuthenticated();
+      } catch (authErr) {
+        throw new Error(`Authentication failed: ${(authErr as Error).message || "Unable to sign in"}`);
+      }
     }
 
     const headers: Record<string, string> = {
