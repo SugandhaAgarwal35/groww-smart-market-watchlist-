@@ -80,28 +80,40 @@ export async function seedDatabase() {
   }
   console.log("✓ 20 Blue-chip Securities seeded");
 
-  // 4. Benchmarks & Sector observations
-  await query(
-    `INSERT INTO benchmark_observations (id, benchmark_symbol, return_pct, price, previous_close, observed_at)
-     VALUES ($1, 'NIFTY', -1.0, 24500.0, 24750.0, NOW())`,
-    [uuid()]
-  );
+  // 4. Benchmarks & Sector observations (only if not already seeded)
+  const existingBench = await query("SELECT id FROM benchmark_observations WHERE benchmark_symbol = 'NIFTY' LIMIT 1");
+  if (existingBench.rows.length === 0) {
+    await query(
+      `INSERT INTO benchmark_observations (id, benchmark_symbol, return_pct, price, previous_close, observed_at)
+       VALUES ($1, 'NIFTY', -1.0, 24500.0, 24750.0, NOW())`,
+      [uuid()]
+    );
+  }
 
-  await query(
-    `INSERT INTO sector_observations (id, sector_id, return_pct, observed_at) VALUES
-     ($1, $2, -2.4, NOW()),
-     ($3, $4, 0.4, NOW()),
-     ($5, $6, -0.6, NOW())`,
-    [uuid(), itId, uuid(), energyId, uuid(), bankingId]
-  );
+  const existingSectorObs = await query("SELECT id FROM sector_observations LIMIT 1");
+  if (existingSectorObs.rows.length === 0) {
+    await query(
+      `INSERT INTO sector_observations (id, sector_id, return_pct, observed_at) VALUES
+       ($1, $2, -2.4, NOW()),
+       ($3, $4, 0.4, NOW()),
+       ($5, $6, -0.6, NOW())`,
+      [uuid(), itId, uuid(), energyId, uuid(), bankingId]
+    );
+  }
   console.log("✓ Benchmarks & Sector context seeded");
 
-  // 5. Corporate Actions (Split on TCS)
-  await query(
-    `INSERT INTO corporate_actions (id, security_id, action_type, effective_at, adjustment_factor, source)
-     VALUES ($1, $2, 'SPLIT', NOW() - INTERVAL '1 day', 0.5, 'NSE_OFFICIAL')`,
-    [uuid(), "20000000-0000-0000-0000-000000000002"]
+  // 5. Corporate Actions (Split on TCS - only if not already seeded)
+  const existingCa = await query(
+    "SELECT id FROM corporate_actions WHERE security_id = $1 AND action_type = 'SPLIT' LIMIT 1",
+    ["20000000-0000-0000-0000-000000000002"]
   );
+  if (existingCa.rows.length === 0) {
+    await query(
+      `INSERT INTO corporate_actions (id, security_id, action_type, effective_at, adjustment_factor, source)
+       VALUES ($1, $2, 'SPLIT', NOW() - INTERVAL '1 day', 0.5, 'NSE_OFFICIAL')`,
+      [uuid(), "20000000-0000-0000-0000-000000000002"]
+    );
+  }
   console.log("✓ Corporate action seeded (2:1 split on TCS)");
 
   // 6. Default Watchlist
@@ -132,13 +144,19 @@ export async function seedDatabase() {
   }
   console.log("✓ Default watchlist created with 4 securities");
 
-  // 7. Run initial market data ingestion
-  console.log("Ingesting initial market observation snapshot...");
-  const snapRes = await ingestMarketData();
-  console.log(`✓ Initial snapshot v${snapRes.version} generated.`);
+  // 7. Run initial market data ingestion (only if no snapshots exist)
+  const existingSnap = await query("SELECT id FROM market_snapshots LIMIT 1");
+  if (existingSnap.rows.length === 0) {
+    console.log("Ingesting initial market observation snapshot...");
+    try {
+      const snapRes = await ingestMarketData();
+      console.log(`✓ Initial snapshot v${snapRes.version} generated.`);
+    } catch (ingestErr) {
+      console.warn("Notice: Initial market ingestion deferred:", (ingestErr as Error).message);
+    }
+  }
 
-  // 8. Seed baseline seen state for INFY (to demonstrate since-last-check move right away)
-  // Baseline price 1500.0 from 2 hours ago
+  // 8. Seed baseline seen state for INFY (only if not already seeded)
   await query(
     `INSERT INTO seen_states (
        id, user_id, watchlist_id, security_id,

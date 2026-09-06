@@ -40,8 +40,27 @@ export async function buildApp() {
   });
 
   // CORS
+  const configuredOrigins = config.webOrigin
+    .split(",")
+    .map((o) => o.trim())
+    .filter(Boolean);
+
   await app.register(cors, {
-    origin: config.webOrigin,
+    origin: (origin, cb) => {
+      if (!origin) {
+        return cb(null, true);
+      }
+      if (configuredOrigins.includes(origin)) {
+        return cb(null, true);
+      }
+      if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+        return cb(null, true);
+      }
+      if (/^https:\/\/([a-zA-Z0-9_-]+)\.onrender\.com$/.test(origin)) {
+        return cb(null, true);
+      }
+      cb(new Error(`Origin ${origin} not allowed by CORS`), false);
+    },
     credentials: true,
   });
 

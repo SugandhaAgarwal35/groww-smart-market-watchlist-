@@ -1,4 +1,4 @@
-CREATE TABLE corporate_actions (
+CREATE TABLE IF NOT EXISTS corporate_actions (
     id UUID PRIMARY KEY,
     security_id UUID NOT NULL REFERENCES securities(id),
     action_type TEXT NOT NULL,
@@ -8,5 +8,5 @@ CREATE TABLE corporate_actions (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_corporate_actions_security_time
+CREATE INDEX IF NOT EXISTS idx_corporate_actions_security_time
 ON corporate_actions(security_id, effective_at);

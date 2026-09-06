@@ -1,4 +1,4 @@
-CREATE TABLE benchmark_observations (
+CREATE TABLE IF NOT EXISTS benchmark_observations (
     id UUID PRIMARY KEY,
     benchmark_symbol TEXT NOT NULL,
     return_pct NUMERIC(20,8) NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE benchmark_observations (
     snapshot_id UUID REFERENCES market_snapshots(id)
 );
 
-CREATE TABLE sector_observations (
+CREATE TABLE IF NOT EXISTS sector_observations (
     id UUID PRIMARY KEY,
     sector_id UUID NOT NULL REFERENCES sectors(id),
     return_pct NUMERIC(20,8) NOT NULL,

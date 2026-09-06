@@ -3,11 +3,24 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { pool, query } from "./pool.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const migrationsDir = path.resolve(__dirname, "../../../migrations");
+function getMigrationsDir(): string {
+  const candidates = [
+    path.resolve(__dirname, "../../../migrations"),
+    path.resolve(__dirname, "../../migrations"),
+    path.resolve(process.cwd(), "migrations"),
+    path.resolve(process.cwd(), "apps/api/migrations"),
+  ];
+  for (const dir of candidates) {
+    if (fs.existsSync(dir) && fs.readdirSync(dir).some((f) => f.endsWith(".sql"))) {
+      return dir;
+    }
+  }
+  return candidates[0]!;
+}
 
 export async function runMigrations(): Promise<void> {
-  console.log("Running database migrations...\n");
+  const migrationsDir = getMigrationsDir();
+  console.log(`Running database migrations from ${migrationsDir}...\n`);
 
   // Ensure migrations tracking table exists
   await query(`
@@ -43,7 +56,10 @@ export async function runMigrations(): Promise<void> {
     try {
       await client.query("BEGIN");
       await client.query(sql);
-      await client.query("INSERT INTO migrations (name) VALUES ($1)", [file]);
+      await client.query(
+        "INSERT INTO migrations (name) VALUES ($1) ON CONFLICT (name) DO NOTHING",
+        [file]
+      );
       await client.query("COMMIT");
       console.log(`  ✔ ${file} (applied)`);
       count++;

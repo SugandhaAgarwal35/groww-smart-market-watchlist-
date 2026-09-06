@@ -1,4 +1,4 @@
-CREATE TABLE market_observations (
+CREATE TABLE IF NOT EXISTS market_observations (
     id UUID PRIMARY KEY,
     security_id UUID NOT NULL REFERENCES securities(id),
     provider TEXT NOT NULL,
@@ -28,8 +28,8 @@ CREATE TABLE market_observations (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_market_obs_security_observed
+CREATE INDEX IF NOT EXISTS idx_market_obs_security_observed
 ON market_observations(security_id, observed_at DESC);
 
-CREATE INDEX idx_market_obs_provider_event
+CREATE INDEX IF NOT EXISTS idx_market_obs_provider_event
 ON market_observations(provider, source_event_id);

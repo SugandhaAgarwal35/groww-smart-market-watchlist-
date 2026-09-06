@@ -1,4 +1,4 @@
-CREATE TABLE watchlist_items (
+CREATE TABLE IF NOT EXISTS watchlist_items (
     id UUID PRIMARY KEY,
     watchlist_id UUID NOT NULL REFERENCES watchlists(id) ON DELETE CASCADE,
     security_id UUID NOT NULL REFERENCES securities(id),
@@ -9,5 +9,5 @@ CREATE TABLE watchlist_items (
         UNIQUE (watchlist_id, security_id)
 );
 
-CREATE INDEX idx_watchlist_items_watchlist
+CREATE INDEX IF NOT EXISTS idx_watchlist_items_watchlist
 ON watchlist_items(watchlist_id, position);

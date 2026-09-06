@@ -1,4 +1,4 @@
-CREATE TABLE securities (
+CREATE TABLE IF NOT EXISTS securities (
     id UUID PRIMARY KEY,
     symbol TEXT NOT NULL,
     exchange TEXT NOT NULL,
@@ -12,5 +12,5 @@ CREATE TABLE securities (
         UNIQUE (exchange, trading_symbol)
 );
 
-CREATE INDEX idx_securities_symbol ON securities(symbol);
-CREATE INDEX idx_securities_name ON securities(name);
+CREATE INDEX IF NOT EXISTS idx_securities_symbol ON securities(symbol);
+CREATE INDEX IF NOT EXISTS idx_securities_name ON securities(name);

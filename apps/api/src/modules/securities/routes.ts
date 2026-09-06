@@ -7,28 +7,7 @@ export async function securitiesRoutes(app: FastifyInstance) {
     const { q } = request.query as { q?: string };
 
     if (!q || q.trim().length === 0) {
-      const defaultSecs = await query<{
-        id: string;
-        symbol: string;
-        exchange: string;
-        name: string;
-        sector_name: string | null;
-      }>(
-        `SELECT s.id, s.symbol, s.exchange, s.name,
-                sec.name as sector_name
-         FROM securities s
-         LEFT JOIN sectors sec ON sec.id = s.sector_id
-         WHERE s.active = TRUE
-         ORDER BY s.symbol ASC
-         LIMIT 20`
-      );
-      return defaultSecs.rows.map((r) => ({
-        id: r.id,
-        symbol: r.symbol,
-        exchange: r.exchange,
-        name: r.name,
-        sectorName: r.sector_name,
-      }));
+      return [];
     }
 
     const rawQuery = q.trim();

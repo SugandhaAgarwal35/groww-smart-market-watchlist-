@@ -1,4 +1,4 @@
-CREATE TABLE watchlists (
+CREATE TABLE IF NOT EXISTS watchlists (
     id UUID PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
@@ -7,4 +7,4 @@ CREATE TABLE watchlists (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_watchlists_user ON watchlists(user_id);
+CREATE INDEX IF NOT EXISTS idx_watchlists_user ON watchlists(user_id);

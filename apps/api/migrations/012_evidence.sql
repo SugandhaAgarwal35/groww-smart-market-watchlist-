@@ -1,4 +1,4 @@
-CREATE TABLE assessment_evidence (
+CREATE TABLE IF NOT EXISTS assessment_evidence (
     id UUID PRIMARY KEY,
     assessment_id UUID NOT NULL REFERENCES change_assessments(id) ON DELETE CASCADE,
     evidence_type TEXT NOT NULL,

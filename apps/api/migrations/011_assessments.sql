@@ -1,4 +1,4 @@
-CREATE TABLE change_assessments (
+CREATE TABLE IF NOT EXISTS change_assessments (
     id UUID PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES users(id),
     watchlist_id UUID NOT NULL REFERENCES watchlists(id),
@@ -19,5 +19,5 @@ CREATE TABLE change_assessments (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_change_assessments_watchlist
+CREATE INDEX IF NOT EXISTS idx_change_assessments_watchlist
 ON change_assessments(watchlist_id, created_at DESC);

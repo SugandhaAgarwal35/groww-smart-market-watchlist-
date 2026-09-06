@@ -665,4 +665,45 @@ describe("Production-Readiness Verification Tests", () => {
       }
     });
   });
+
+  // ── 7. Production Health, CORS & SSE Stream ──────────────
+  describe("7. Production Health, CORS & SSE Stream", () => {
+    it("verifies /health/ready returns status ready and counts securities", async () => {
+      const res = await app.inject({
+        method: "GET",
+        url: "/api/v1/health/ready",
+      });
+
+      expect(res.statusCode).toBe(200);
+      const data = JSON.parse(res.body);
+      expect(data.status).toBe("ready");
+      expect(data.database).toBe("connected");
+      expect(data.securitiesCount).toBeGreaterThan(0);
+    });
+
+    it("allows onrender.com subdomains via CORS", async () => {
+      const res = await app.inject({
+        method: "OPTIONS",
+        url: "/api/v1/securities/search?q=INFY",
+        headers: {
+          Origin: "https://watchlist-web-prod.onrender.com",
+          "Access-Control-Request-Method": "GET",
+        },
+      });
+
+      expect(res.headers["access-control-allow-origin"]).toBe("https://watchlist-web-prod.onrender.com");
+      expect(res.headers["access-control-allow-credentials"]).toBe("true");
+    });
+
+    it("verifies /api/v1/market/live-stream is registered with SSE support", async () => {
+      const hasRoute = app.hasRoute({
+        method: "GET",
+        url: "/api/v1/market/live-stream",
+      });
+      expect(hasRoute).toBe(true);
+
+      // Verify realtimeMarketService registers SSE clients
+      expect(typeof realtimeMarketService.registerClient).toBe("function");
+    });
+  });
 });

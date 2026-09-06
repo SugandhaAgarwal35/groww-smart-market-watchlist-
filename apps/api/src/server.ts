@@ -11,7 +11,9 @@ async function start() {
     await seedDatabase();
     console.log("✓ Database initialized successfully.");
   } catch (dbInitErr) {
-    console.error("Database initialization notice:", dbInitErr);
+    console.error("CRITICAL: Database initialization failed:", dbInitErr);
+    // Fail fast so Render does not falsely report a healthy service with an uninitialized database
+    process.exit(1);
   }
 
   const app = await buildApp();

@@ -1,4 +1,4 @@
-CREATE TABLE seen_states (
+CREATE TABLE IF NOT EXISTS seen_states (
     id UUID PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     watchlist_id UUID NOT NULL REFERENCES watchlists(id) ON DELETE CASCADE,
@@ -18,5 +18,5 @@ CREATE TABLE seen_states (
         UNIQUE (user_id, watchlist_id, security_id)
 );
 
-CREATE INDEX idx_seen_states_user_watchlist
+CREATE INDEX IF NOT EXISTS idx_seen_states_user_watchlist
 ON seen_states(user_id, watchlist_id);
