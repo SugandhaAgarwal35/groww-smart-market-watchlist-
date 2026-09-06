@@ -5,6 +5,7 @@ import tailwindcss from "tailwindcss";
 import autoprefixer from "autoprefixer";
 
 export default defineConfig({
+  envDir: path.resolve(__dirname, "../../"),
   plugins: [react()],
   resolve: {
     alias: {

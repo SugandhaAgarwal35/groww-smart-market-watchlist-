@@ -29,7 +29,39 @@ class ApiClient {
     return this.token;
   }
 
+  public async ensureAuthenticated(): Promise<string | null> {
+    if (this.token) return this.token;
+
+    const demoEmail =
+      (typeof import.meta !== "undefined" && import.meta.env?.VITE_DEMO_EMAIL) || "demo@groww.in";
+    const demoPassword =
+      (typeof import.meta !== "undefined" && import.meta.env?.VITE_DEMO_PASSWORD) || "Password123!";
+    const isDemoDisabled =
+      typeof import.meta !== "undefined" && import.meta.env?.VITE_ENABLE_DEMO_AUTH === "false";
+
+    if (!isDemoDisabled) {
+      try {
+        const res = await this.login(demoEmail, demoPassword);
+        return res.token;
+      } catch (err) {
+        console.error("Auto login error:", err);
+      }
+    }
+    return null;
+  }
+
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    const isPublicEndpoint =
+      endpoint.startsWith("/auth/") ||
+      endpoint.startsWith("/health/") ||
+      endpoint.startsWith("/market/session") ||
+      endpoint.startsWith("/market/indices") ||
+      endpoint.startsWith("/market/movers");
+
+    if (!this.token && !isPublicEndpoint) {
+      await this.ensureAuthenticated();
+    }
+
     const headers: Record<string, string> = {
       ...(options.headers as Record<string, string>),
     };
@@ -70,6 +102,18 @@ class ApiClient {
     }
 
     if (!res.ok) {
+      // Auto-recover from 401 by clearing stale token, re-authenticating, and retrying once
+      if (res.status === 401 && !isPublicEndpoint && !(options as { _retried?: boolean })._retried) {
+        this.setToken(null);
+        const newToken = await this.ensureAuthenticated();
+        if (newToken) {
+          return await this.request<T>(endpoint, {
+            ...options,
+            _retried: true,
+          } as RequestInit);
+        }
+      }
+
       const errorObj = data as { error?: { message?: string; code?: string }; message?: string };
       const errorMsg =
         errorObj?.error?.message ||

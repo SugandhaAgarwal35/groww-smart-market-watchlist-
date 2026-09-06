@@ -92,21 +92,7 @@ export const App: React.FC = () => {
 
   // Auto-login explicitly controlled by demo/development configuration
   const ensureAuth = useCallback(async () => {
-    if (!api.getToken()) {
-      const isDemoConfigured =
-        import.meta.env.VITE_ENABLE_DEMO_AUTH === "true" ||
-        (import.meta.env.DEV && import.meta.env.VITE_DEMO_AUTO_LOGIN === "true");
-      const demoEmail = import.meta.env.VITE_DEMO_EMAIL;
-      const demoPassword = import.meta.env.VITE_DEMO_PASSWORD;
-
-      if (isDemoConfigured && demoEmail && demoPassword) {
-        try {
-          await api.login(demoEmail, demoPassword);
-        } catch (err) {
-          console.error("Auto login error:", err);
-        }
-      }
-    }
+    return await api.ensureAuthenticated();
   }, []);
 
   // Fetch user profile and preferences
@@ -155,6 +141,7 @@ export const App: React.FC = () => {
       else setIsRefreshing(true);
 
       try {
+        await ensureAuth();
         const data = await api.getSnapshot(activeWatchlistId);
         setSnapshot(data);
         setErrorMessage(null);
@@ -165,7 +152,7 @@ export const App: React.FC = () => {
         setIsRefreshing(false);
       }
     },
-    [activeWatchlistId]
+    [activeWatchlistId, ensureAuth]
   );
 
   // Fetch movers for explore page
@@ -505,12 +492,30 @@ export const App: React.FC = () => {
         {errorMessage && (
           <div className="mb-6 p-4 rounded-xl bg-[#FDF2F2] border border-[#EB5757]/30 text-[#EB5757] text-xs flex items-center justify-between">
             <span>{errorMessage}</span>
-            <button
-              onClick={() => setErrorMessage(null)}
-              className="text-xs font-semibold px-2.5 py-1 rounded-md bg-[#EB5757] text-white hover:bg-[#D94F4F] transition-colors cursor-pointer"
-            >
-              Dismiss
-            </button>
+            <div className="flex items-center gap-2">
+              {(errorMessage.includes("authorization") ||
+                errorMessage.includes("token") ||
+                errorMessage.includes("401") ||
+                errorMessage.includes("Authentication required")) && (
+                <button
+                  onClick={async () => {
+                    setErrorMessage(null);
+                    await api.ensureAuthenticated();
+                    loadWatchlists();
+                    if (activeWatchlistId) loadSnapshot(true);
+                  }}
+                  className="text-xs font-semibold px-2.5 py-1 rounded-md bg-[#00D09C] text-white hover:bg-[#00B085] transition-colors cursor-pointer"
+                >
+                  Reconnect
+                </button>
+              )}
+              <button
+                onClick={() => setErrorMessage(null)}
+                className="text-xs font-semibold px-2.5 py-1 rounded-md bg-[#EB5757] text-white hover:bg-[#D94F4F] transition-colors cursor-pointer"
+              >
+                Dismiss
+              </button>
+            </div>
           </div>
         )}
 
