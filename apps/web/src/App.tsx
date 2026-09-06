@@ -169,8 +169,15 @@ export const App: React.FC = () => {
 
   // Initial load
   useEffect(() => {
-    loadUserAndPreferences();
-    loadWatchlists();
+    const initApp = async () => {
+      await ensureAuth();
+      await Promise.all([
+        loadUserAndPreferences(),
+        loadWatchlists(),
+      ]);
+    };
+
+    initApp();
     fetchMovers();
     api.getIndices().then((res) => {
       if (res.indices) setIndices(res.indices);
@@ -179,7 +186,7 @@ export const App: React.FC = () => {
 
     const moverInterval = setInterval(fetchMovers, 5000);
     return () => clearInterval(moverInterval);
-  }, [loadUserAndPreferences, loadWatchlists, fetchMovers]);
+  }, [ensureAuth, loadUserAndPreferences, loadWatchlists, fetchMovers]);
 
   // When active watchlist changes, load snapshot
   useEffect(() => {
@@ -500,9 +507,10 @@ export const App: React.FC = () => {
                 <button
                   onClick={async () => {
                     setErrorMessage(null);
+                    api.setToken(null);
                     await api.ensureAuthenticated();
-                    loadWatchlists();
-                    if (activeWatchlistId) loadSnapshot(true);
+                    await loadWatchlists();
+                    await loadUserAndPreferences();
                   }}
                   className="text-xs font-semibold px-2.5 py-1 rounded-md bg-[#00D09C] text-white hover:bg-[#00B085] transition-colors cursor-pointer"
                 >

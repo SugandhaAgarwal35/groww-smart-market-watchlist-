@@ -29,8 +29,11 @@ class ApiClient {
     return this.token;
   }
 
+  private authPromise: Promise<string | null> | null = null;
+
   public async ensureAuthenticated(): Promise<string | null> {
     if (this.token) return this.token;
+    if (this.authPromise) return this.authPromise;
 
     const demoEmail =
       (typeof import.meta !== "undefined" && import.meta.env?.VITE_DEMO_EMAIL) || "demo@groww.in";
@@ -40,12 +43,18 @@ class ApiClient {
       typeof import.meta !== "undefined" && import.meta.env?.VITE_ENABLE_DEMO_AUTH === "false";
 
     if (!isDemoDisabled) {
-      try {
-        const res = await this.login(demoEmail, demoPassword);
-        return res.token;
-      } catch (err) {
-        console.error("Auto login error:", err);
-      }
+      this.authPromise = (async () => {
+        try {
+          const res = await this.login(demoEmail, demoPassword);
+          return res.token;
+        } catch (err) {
+          console.error("Auto login error:", err);
+          return null;
+        } finally {
+          this.authPromise = null;
+        }
+      })();
+      return this.authPromise;
     }
     return null;
   }
