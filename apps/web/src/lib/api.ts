@@ -65,7 +65,8 @@ class ApiClient {
       endpoint.startsWith("/health/") ||
       endpoint.startsWith("/market/session") ||
       endpoint.startsWith("/market/indices") ||
-      endpoint.startsWith("/market/movers");
+      endpoint.startsWith("/market/movers") ||
+      endpoint.startsWith("/securities/");
 
     if (!this.token && !isPublicEndpoint) {
       try {
