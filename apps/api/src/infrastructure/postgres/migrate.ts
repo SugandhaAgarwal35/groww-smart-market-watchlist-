@@ -3,6 +3,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { pool, query } from "./pool.js";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 function getMigrationsDir(): string {
   const candidates = [
     path.resolve(__dirname, "../../../migrations"),
