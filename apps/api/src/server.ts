@@ -1,8 +1,19 @@
 import { buildApp } from "./app.js";
 import { config } from "./config/index.js";
 import { pool } from "./infrastructure/postgres/pool.js";
+import { runMigrations } from "./infrastructure/postgres/migrate.js";
+import { seedDatabase } from "./infrastructure/postgres/seed.js";
 
 async function start() {
+  try {
+    console.log("Initializing database schema and seed data...");
+    await runMigrations();
+    await seedDatabase();
+    console.log("✓ Database initialized successfully.");
+  } catch (dbInitErr) {
+    console.error("Database initialization notice:", dbInitErr);
+  }
+
   const app = await buildApp();
 
   // Graceful shutdown

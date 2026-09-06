@@ -6,7 +6,7 @@ import { pool, query } from "./pool.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const migrationsDir = path.resolve(__dirname, "../../../migrations");
 
-async function migrate(): Promise<void> {
+export async function runMigrations(): Promise<void> {
   console.log("Running database migrations...\n");
 
   // Ensure migrations tracking table exists
@@ -57,10 +57,17 @@ async function migrate(): Promise<void> {
   }
 
   console.log(`\n${count} migration(s) applied.`);
-  await pool.end();
 }
 
-migrate().catch((err) => {
-  console.error("Migration failed:", err);
-  process.exit(1);
-});
+// Standalone execution support
+if (process.argv[1] && process.argv[1].endsWith("migrate.ts")) {
+  runMigrations()
+    .then(async () => {
+      await pool.end();
+    })
+    .catch((err) => {
+      console.error("Migration failed:", err);
+      process.exit(1);
+    });
+}
+
