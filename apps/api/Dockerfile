@@ -11,7 +11,7 @@ COPY packages/contracts/package.json ./packages/contracts/
 COPY apps/api/package.json ./apps/api/
 
 # Install all dependencies (including dev)
-RUN npm ci
+RUN npm install --ignore-scripts=false --force
 
 # Copy source code
 COPY packages/contracts ./packages/contracts
@@ -36,7 +36,7 @@ COPY packages/contracts/package.json ./packages/contracts/
 COPY apps/api/package.json ./apps/api/
 
 # Install production dependencies only
-RUN npm ci --omit=dev
+RUN npm install --omit=dev --ignore-scripts=false --force
 
 # Copy built artifacts from builder
 COPY --from=builder /app/packages/contracts/dist ./packages/contracts/dist

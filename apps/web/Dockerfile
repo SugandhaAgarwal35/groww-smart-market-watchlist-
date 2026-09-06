@@ -11,7 +11,7 @@ COPY packages/contracts/package.json ./packages/contracts/
 COPY apps/web/package.json ./apps/web/
 
 # Install dependencies
-RUN npm ci
+RUN npm install --ignore-scripts=false --force
 
 # Copy source code
 COPY packages/contracts ./packages/contracts
