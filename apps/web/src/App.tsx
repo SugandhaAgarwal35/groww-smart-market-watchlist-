@@ -191,7 +191,7 @@ export const App: React.FC = () => {
   // ── Real-Time Live Server-Sent Events (SSE) Stream ──────────
   useEffect(() => {
     let es: EventSource | null = null;
-    let retryTimeout: NodeJS.Timeout | null = null;
+    let retryTimeout: ReturnType<typeof setTimeout> | null = null;
 
     const connectStream = () => {
       try {
