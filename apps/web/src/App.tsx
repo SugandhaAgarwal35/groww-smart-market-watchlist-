@@ -753,22 +753,20 @@ export const App: React.FC = () => {
       />
 
       {/* 6. Add Security Modal */}
-      {activeWatchlistId && (
-        <SecuritySearchModal
-          isOpen={isSearchOpen}
-          onClose={() => setIsSearchOpen(false)}
-          watchlistId={activeWatchlistId}
-          existingSecurityIds={snapshot?.items.map((i) => i.security.id) ?? []}
-          onAdded={(sec, status) => {
-            if (status === "already_exists") {
-              showToast("info", `${sec.symbol} is already in your watchlist.`);
-            } else {
-              showToast("success", `Added ${sec.symbol} to your watchlist.`);
-            }
-            loadSnapshot(false);
-          }}
-        />
-      )}
+      <SecuritySearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        watchlistId={activeWatchlistId || watchlists[0]?.id || ""}
+        existingSecurityIds={snapshot?.items.map((i) => i.security.id) ?? []}
+        onAdded={(sec, status) => {
+          if (status === "already_exists") {
+            showToast("info", `${sec.symbol} is already in your watchlist.`);
+          } else {
+            showToast("success", `Added ${sec.symbol} to your watchlist.`);
+          }
+          loadSnapshot(false);
+        }}
+      />
 
       {/* 7. Watchlist Manager Modal */}
       <WatchlistManagerModal

@@ -51,6 +51,10 @@ export const SecuritySearchModal: React.FC<SecuritySearchModalProps> = ({
   if (!isOpen) return null;
 
   const handleAdd = async (sec: SecuritySearchResult) => {
+    if (!watchlistId) {
+      setErrorMsg("Please select or create a watchlist first before adding stocks.");
+      return;
+    }
     setAddingId(sec.id);
     setErrorMsg(null);
     try {
