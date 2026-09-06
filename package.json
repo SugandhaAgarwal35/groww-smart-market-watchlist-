@@ -1,0 +1,25 @@
+{
+  "name": "smart-market-watchlist",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Smart Market Watchlist — Code by Groww 2026",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "npm run dev -w apps/api",
+    "dev:web": "npm run dev -w apps/web",
+    "build": "tsc -b packages/contracts apps/api apps/web && npm run build --prefix apps/web",
+    "test": "npm run test -w apps/api",
+    "migrate": "npm run migrate -w apps/api",
+    "seed": "npm run seed -w apps/api",
+    "lint": "npx tsc -b"
+  },
+  "devDependencies": {
+    "@esbuild/win32-x64": "^0.28.2",
+    "concurrently": "^9.1.2",
+    "typescript": "^5.7.3"
+  }
+}

@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+
+# Production & Build Outputs
+dist/
+build/
+out/
+.next/
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+
+# Environment and Secret Files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.*.local
+!.env.example
+
+# Logs
+*.log
+
+# Testing & Coverage
+coverage/
+.vitest/
+
+# IDE and Editor Files
+.idea/
+.vscode/
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Database & Cache local artifacts
+pgdata/
+dump.rdb
