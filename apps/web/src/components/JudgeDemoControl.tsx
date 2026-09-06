@@ -77,7 +77,7 @@ export const JudgeDemoControl: React.FC<JudgeDemoControlProps> = ({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 max-w-lg w-full px-3 sm:px-0 pointer-events-none">
+    <div className={`fixed bottom-5 right-5 z-50 pointer-events-none ${isOpen ? "max-w-lg w-full px-3 sm:px-0" : ""}`}>
       <div className="pointer-events-auto">
         {/* Collapsed Pill Button */}
         {!isOpen ? (

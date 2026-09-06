@@ -64,6 +64,8 @@ export const SecuritySearchModal: React.FC<SecuritySearchModalProps> = ({
     }
   };
 
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
       <div className="bg-white border border-[#EAECF0] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in">
