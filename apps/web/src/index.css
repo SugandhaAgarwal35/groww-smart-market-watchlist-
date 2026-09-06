@@ -1,0 +1,575 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@charset "UTF-8";
+
+/* ── Groww Official Light Theme Design System ──────────────── */
+:root {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Groww Light Theme Palette */
+  --groww-bg: #F4F6F8;
+  --groww-bg-secondary: #F8F9FA;
+  --groww-card: #FFFFFF;
+  --groww-card-hover: #FAFBFC;
+  --groww-border: #EAECF0;
+  --groww-border-light: #F0F2F5;
+  --groww-border-hover: #D0D5DD;
+
+  /* Groww Brand Colors */
+  --groww-primary: #00D09C;
+  --groww-primary-dark: #00B386;
+  --groww-primary-hover: #00C48F;
+  --groww-primary-bg: rgba(0, 208, 156, 0.08);
+  --groww-primary-bg-strong: rgba(0, 208, 156, 0.15);
+  --groww-primary-border: rgba(0, 208, 156, 0.25);
+
+  /* Text Colors */
+  --text-primary: #1E222D;
+  --text-secondary: #44475B;
+  --text-muted: #7C7E8C;
+  --text-faint: #9CA3AF;
+  --text-white: #FFFFFF;
+
+  /* Groww Up/Down */
+  --groww-green: #00B386;
+  --groww-green-bg: #E6F9F5;
+  --groww-green-border: rgba(0, 179, 134, 0.2);
+  --groww-red: #EB5757;
+  --groww-red-bg: #FDF2F2;
+  --groww-red-border: rgba(235, 87, 87, 0.2);
+
+  /* Attention hierarchy */
+  --attn-high: #EB5757;
+  --attn-high-bg: #FDF2F2;
+  --attn-high-border: rgba(235, 87, 87, 0.25);
+  --attn-med: #F59E0B;
+  --attn-med-bg: #FFFBEB;
+  --attn-med-border: rgba(245, 158, 11, 0.25);
+  --attn-low: #3B82F6;
+  --attn-low-bg: #EFF6FF;
+  --attn-low-border: rgba(59, 130, 246, 0.2);
+  --attn-none: #9CA3AF;
+  --attn-none-bg: #F3F4F6;
+  --attn-none-border: rgba(156, 163, 175, 0.2);
+
+  /* Navbar */
+  --navbar-bg: #FFFFFF;
+  --navbar-border: #EAECF0;
+  --navbar-height: 64px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  /* Semantic Theme Aliases */
+  --background: #F4F6F8;
+  --surface: #FFFFFF;
+  --surface-secondary: #F8F9FA;
+  --surface-hover: #F2F4F7;
+  --text-primary: #1E222D;
+  --text-secondary: #44475B;
+  --text-muted: #7C7E8C;
+  --text-faint: #9CA3AF;
+  --border: #EAECF0;
+  --border-light: #F0F2F5;
+  --border-hover: #D0D5DD;
+  --accent: #00D09C;
+  --accent-dark: #00B386;
+  --positive: #00B386;
+  --positive-bg: #E6F9F5;
+  --negative: #EB5757;
+  --negative-bg: #FDF2F2;
+  --warning: #F5A623;
+  --warning-bg: #FFF9EB;
+  --attention-high: #EB5757;
+  --attention-high-bg: #FDF2F2;
+  --attention-medium: #F5A623;
+  --attention-medium-bg: #FFF9EB;
+  --attention-low: #3B82F6;
+  --attention-low-bg: #EFF6FF;
+}
+
+/* ── Groww Official Dark Theme Design System ───────────────── */
+[data-theme="dark"] {
+  --groww-bg: #0B0E14;
+  --groww-bg-secondary: #141923;
+  --groww-card: #151A24;
+  --groww-card-hover: #1C2230;
+  --groww-border: #232B3B;
+  --groww-border-light: #1A212E;
+  --groww-border-hover: #334155;
+
+  --groww-primary: #00D09C;
+  --groww-primary-dark: #00B386;
+  --groww-primary-hover: #00E2AA;
+  --groww-primary-bg: rgba(0, 208, 156, 0.12);
+  --groww-primary-bg-strong: rgba(0, 208, 156, 0.22);
+  --groww-primary-border: rgba(0, 208, 156, 0.35);
+
+  --text-primary: #F3F4F6;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+  --text-faint: #64748B;
+  --text-white: #FFFFFF;
+
+  --groww-green: #00D09C;
+  --groww-green-bg: rgba(0, 208, 156, 0.12);
+  --groww-green-border: rgba(0, 208, 156, 0.3);
+  --groww-red: #F87171;
+  --groww-red-bg: rgba(239, 68, 68, 0.15);
+  --groww-red-border: rgba(248, 113, 113, 0.3);
+
+  --attn-high: #F87171;
+  --attn-high-bg: rgba(239, 68, 68, 0.2);
+  --attn-high-border: rgba(248, 113, 113, 0.35);
+  --attn-med: #FBBF24;
+  --attn-med-bg: rgba(245, 158, 11, 0.2);
+  --attn-med-border: rgba(251, 191, 36, 0.35);
+  --attn-low: #60A5FA;
+  --attn-low-bg: rgba(59, 130, 246, 0.2);
+  --attn-low-border: rgba(96, 165, 250, 0.3);
+  --attn-none: #6B7280;
+  --attn-none-bg: #1F2937;
+  --attn-none-border: rgba(107, 114, 128, 0.3);
+
+  --navbar-bg: #151A24;
+  --navbar-border: #232B3B;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.7);
+  --shadow-xl: 0 8px 32px rgba(0, 0, 0, 0.8);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.6);
+
+  --background: #0B0E14;
+  --surface: #151A24;
+  --surface-secondary: #1C2230;
+  --surface-hover: #242D3E;
+  --border: #232B3B;
+  --border-light: #1A212E;
+  --border-hover: #334155;
+  --positive: #00D09C;
+  --positive-bg: rgba(0, 208, 156, 0.12);
+  --negative: #F87171;
+  --negative-bg: rgba(239, 68, 68, 0.15);
+  --warning: #FBBF24;
+  --warning-bg: rgba(245, 158, 11, 0.15);
+  --attention-high: #F87171;
+  --attention-high-bg: rgba(239, 68, 68, 0.2);
+  --attention-medium: #FBBF24;
+  --attention-medium-bg: rgba(245, 158, 11, 0.2);
+  --attention-low: #60A5FA;
+  --attention-low-bg: rgba(59, 130, 246, 0.2);
+}
+
+/* ── Dark Theme Element Overrides ────────────────────────── */
+[data-theme="dark"] body {
+  background-color: var(--background);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .bg-white {
+  background-color: var(--surface) !important;
+}
+
+[data-theme="dark"] .bg-\[\#F4F6F8\],
+[data-theme="dark"] .bg-\[\#F8F9FA\],
+[data-theme="dark"] .bg-\[\#F9FAFB\],
+[data-theme="dark"] .bg-\[\#FAFBFC\],
+[data-theme="dark"] .bg-\[\#F2F4F7\],
+[data-theme="dark"] .bg-\[\#EEF2F6\] {
+  background-color: var(--surface-secondary) !important;
+}
+
+[data-theme="dark"] .hover\:bg-\[\#F8F9FA\]:hover,
+[data-theme="dark"] .hover\:bg-\[\#F2F4F7\]:hover,
+[data-theme="dark"] .hover\:bg-\[\#F9FAFB\]:hover,
+[data-theme="dark"] .hover\:bg-\[\#FAFBFC\]:hover,
+[data-theme="dark"] .hover\:bg-\[\#EAECF0\]:hover,
+[data-theme="dark"] .hover\:bg-white:hover {
+  background-color: var(--surface-hover) !important;
+}
+
+[data-theme="dark"] .bg-\[\#E6F9F5\] {
+  background-color: rgba(0, 208, 156, 0.14) !important;
+}
+
+[data-theme="dark"] .bg-\[\#FDF2F2\] {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+}
+
+[data-theme="dark"] .bg-\[\#FFF9EB\],
+[data-theme="dark"] .bg-\[\#FFFBEB\] {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+}
+
+[data-theme="dark"] .bg-\[\#EEF2F6\],
+[data-theme="dark"] .bg-\[\#EFF6FF\] {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+}
+
+[data-theme="dark"] .border-\[\#EAECF0\],
+[data-theme="dark"] .border-\[\#F0F2F5\],
+[data-theme="dark"] .border-\[\#D0D5DD\] {
+  border-color: var(--border) !important;
+}
+
+[data-theme="dark"] .divide-\[\#EAECF0\] > :not([hidden]) ~ :not([hidden]),
+[data-theme="dark"] .divide-\[\#F0F2F5\] > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--border) !important;
+}
+
+[data-theme="dark"] .text-\[\#1E222D\] {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .text-\[\#44475B\] {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .text-\[\#7C7E8C\],
+[data-theme="dark"] .text-\[\#9CA3AF\] {
+  color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .text-\[\#00B386\] {
+  color: #00D09C !important;
+}
+
+[data-theme="dark"] .text-\[\#EB5757\] {
+  color: #F87171 !important;
+}
+
+[data-theme="dark"] .text-\[\#F5A623\] {
+  color: #FBBF24 !important;
+}
+
+[data-theme="dark"] .from-\[\#F8F9FA\],
+[data-theme="dark"] .to-\[\#F4F6F8\] {
+  --tw-gradient-from: var(--surface-secondary) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: var(--surface) var(--tw-gradient-to-position) !important;
+}
+
+[data-theme="dark"] input {
+  background-color: var(--surface-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border) !important;
+}
+
+/* ── Reset & Base Styles ─────────────────────────────────── */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--groww-bg);
+  color: var(--text-secondary);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Groww Cards ─────────────────────────────────────────── */
+.groww-card {
+  background: var(--groww-card);
+  border: 1px solid var(--groww-border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  transition: all 0.2s ease;
+}
+
+.groww-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--groww-border-hover);
+}
+
+.groww-card-flat {
+  background: var(--groww-card);
+  border: 1px solid var(--groww-border);
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.groww-card-flat:hover {
+  background: var(--groww-bg-secondary);
+  border-color: var(--groww-border-hover);
+}
+
+/* ── Groww Buttons ───────────────────────────────────────── */
+.btn-groww-primary {
+  background: var(--groww-primary);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 4px rgba(0, 208, 156, 0.2);
+}
+
+.btn-groww-primary:hover {
+  background: var(--groww-primary-dark);
+  box-shadow: 0 4px 8px rgba(0, 208, 156, 0.25);
+  transform: translateY(-1px);
+}
+
+.btn-groww-primary:active {
+  transform: translateY(0);
+}
+
+.btn-groww-secondary {
+  background: var(--groww-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--groww-border);
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.btn-groww-secondary:hover {
+  background: var(--groww-bg-secondary);
+  border-color: var(--groww-border-hover);
+}
+
+.btn-groww-outline {
+  background: transparent;
+  color: var(--groww-primary-dark);
+  border: 1px solid var(--groww-primary-border);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.btn-groww-outline:hover {
+  background: var(--groww-primary-bg);
+  border-color: var(--groww-primary);
+}
+
+/* ── Groww Badges & Pills ────────────────────────────────── */
+.badge-attn-high {
+  background: var(--attn-high-bg);
+  color: var(--attn-high);
+  border: 1px solid var(--attn-high-border);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.badge-attn-medium {
+  background: var(--attn-med-bg);
+  color: var(--attn-med);
+  border: 1px solid var(--attn-med-border);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.badge-attn-low {
+  background: var(--attn-low-bg);
+  color: var(--attn-low);
+  border: 1px solid var(--attn-low-border);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.badge-attn-none {
+  background: var(--attn-none-bg);
+  color: var(--text-muted);
+  border: 1px solid var(--attn-none-border);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ── Groww Stock Table ───────────────────────────────────── */
+.groww-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.groww-table th {
+  background: var(--groww-bg-secondary);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--groww-border);
+  text-align: left;
+}
+
+.groww-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--groww-border-light);
+  font-size: 0.875rem;
+  vertical-align: middle;
+  color: var(--text-secondary);
+}
+
+.groww-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.groww-table tbody tr:hover {
+  background: var(--groww-bg-secondary);
+}
+
+/* ── Groww Tab Active Indicator ───────────────────────────── */
+.groww-tab-active {
+  color: var(--text-primary);
+  font-weight: 600;
+  border-bottom: 2px solid var(--groww-primary);
+}
+
+.groww-tab-inactive {
+  color: var(--text-muted);
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+}
+
+.groww-tab-inactive:hover {
+  color: var(--text-secondary);
+}
+
+/* ── Price Flash Animations ──────────────────────────────── */
+@keyframes flashGreen {
+  0% { background-color: var(--groww-green-bg); }
+  100% { background-color: transparent; }
+}
+
+@keyframes flashRed {
+  0% { background-color: var(--groww-red-bg); }
+  100% { background-color: transparent; }
+}
+
+.flash-up {
+  animation: flashGreen 0.7s ease-out;
+}
+
+.flash-down {
+  animation: flashRed 0.7s ease-out;
+}
+
+/* ── Pulse for live indicators ───────────────────────────── */
+@keyframes livePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.live-pulse {
+  animation: livePulse 2s ease-in-out infinite;
+}
+
+/* ── Custom Scrollbar (Light) ────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--groww-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D0D5DD;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
+/* ── Utility: hide scrollbar ─────────────────────────────── */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ── Modal Overlay ───────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Transition Helpers ──────────────────────────────────── */
+.transition-base {
+  transition: all 0.2s ease;
+}
+
+/* ── Groww Search Bar Styles ─────────────────────────────── */
+.groww-search-bar {
+  background: #F2F4F7;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.groww-search-bar:focus {
+  outline: none;
+  border-color: var(--groww-primary);
+  background: var(--groww-card);
+  box-shadow: 0 0 0 3px var(--groww-primary-bg);
+}
+
+.groww-search-bar::placeholder {
+  color: var(--text-faint);
+}
