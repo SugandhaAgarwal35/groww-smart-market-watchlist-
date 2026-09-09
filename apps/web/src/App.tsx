@@ -41,6 +41,8 @@ export const App: React.FC = () => {
   const [isHelpOpen, setIsHelpOpen] = useState<boolean>(false);
   const [helpTopic, setHelpTopic] = useState<string>("overview");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [connectionStatus, setConnectionStatus] = useState<string | null>(null);
+  const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const showToast = useCallback(
@@ -121,14 +123,23 @@ export const App: React.FC = () => {
   const loadWatchlists = useCallback(async () => {
     try {
       await ensureAuth();
-      const list = await api.getWatchlists();
+      const list = await api.getWatchlists({
+        onRetry: (attempt, maxAttempts) => {
+          setConnectionStatus(`Connecting to live service… (Attempt ${attempt}/${maxAttempts})`);
+        },
+      });
       setWatchlists(list);
+      setConnectionStatus(null);
+      setErrorMessage(null);
 
       if (list.length > 0 && !activeWatchlistId) {
         setActiveWatchlistId(list[0]!.id);
       }
     } catch (err: unknown) {
+      setConnectionStatus(null);
       setErrorMessage((err as Error).message);
+    } finally {
+      setIsInitialLoading(false);
     }
   }, [ensureAuth, activeWatchlistId]);
 
@@ -142,10 +153,16 @@ export const App: React.FC = () => {
 
       try {
         await ensureAuth();
-        const data = await api.getSnapshot(activeWatchlistId);
+        const data = await api.getSnapshot(activeWatchlistId, {
+          onRetry: (attempt, maxAttempts) => {
+            setConnectionStatus(`Connecting to live service… (Attempt ${attempt}/${maxAttempts})`);
+          },
+        });
         setSnapshot(data);
+        setConnectionStatus(null);
         setErrorMessage(null);
       } catch (err: unknown) {
+        setConnectionStatus(null);
         setErrorMessage((err as Error).message);
       } finally {
         setIsLoading(false);
@@ -170,11 +187,16 @@ export const App: React.FC = () => {
   // Initial load
   useEffect(() => {
     const initApp = async () => {
-      await ensureAuth();
-      await Promise.all([
-        loadUserAndPreferences(),
-        loadWatchlists(),
-      ]);
+      setIsInitialLoading(true);
+      try {
+        await ensureAuth();
+        await Promise.all([
+          loadUserAndPreferences(),
+          loadWatchlists(),
+        ]);
+      } catch {
+        // Handled in sub-methods
+      }
     };
 
     initApp();
@@ -495,28 +517,31 @@ export const App: React.FC = () => {
 
       {/* 4. Main 2-Column Container */}
       <main className="flex-1 max-w-[1240px] w-full mx-auto px-4 sm:px-6 py-6">
+        {/* Cold-start retry / connecting notification */}
+        {connectionStatus && (
+          <div className="mb-6 p-4 rounded-xl bg-[#E6F9F5] border border-[#00B386]/30 text-[#00B386] text-xs flex items-center gap-2">
+            <span className="w-3.5 h-3.5 border-2 border-[#00B386]/30 border-t-[#00B386] rounded-full animate-spin flex-shrink-0" />
+            <span className="font-medium">{connectionStatus}</span>
+          </div>
+        )}
+
         {/* Error notification if any */}
         {errorMessage && (
           <div className="mb-6 p-4 rounded-xl bg-[#FDF2F2] border border-[#EB5757]/30 text-[#EB5757] text-xs flex items-center justify-between">
             <span>{errorMessage}</span>
             <div className="flex items-center gap-2">
-              {(errorMessage.includes("authorization") ||
-                errorMessage.includes("token") ||
-                errorMessage.includes("401") ||
-                errorMessage.includes("Authentication required")) && (
-                <button
-                  onClick={async () => {
-                    setErrorMessage(null);
-                    api.setToken(null);
-                    await api.ensureAuthenticated();
-                    await loadWatchlists();
-                    await loadUserAndPreferences();
-                  }}
-                  className="text-xs font-semibold px-2.5 py-1 rounded-md bg-[#00D09C] text-white hover:bg-[#00B085] transition-colors cursor-pointer"
-                >
-                  Reconnect
-                </button>
-              )}
+              <button
+                onClick={async () => {
+                  setErrorMessage(null);
+                  setIsInitialLoading(true);
+                  await api.ensureAuthenticated();
+                  await loadWatchlists();
+                  await loadUserAndPreferences();
+                }}
+                className="text-xs font-semibold px-2.5 py-1 rounded-md bg-[#00D09C] text-white hover:bg-[#00B085] transition-colors cursor-pointer"
+              >
+                Retry
+              </button>
               <button
                 onClick={() => setErrorMessage(null)}
                 className="text-xs font-semibold px-2.5 py-1 rounded-md bg-[#EB5757] text-white hover:bg-[#D94F4F] transition-colors cursor-pointer"
@@ -571,8 +596,29 @@ export const App: React.FC = () => {
             {/* View: Smart Watchlist (Native Feature Tab) */}
             {categoryTab === "SMART_WATCHLIST" && (
               <>
-                {/* Watchlist Tabs Row with New/Manage trigger */}
-                <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#EAECF0]">
+                {isInitialLoading && watchlists.length === 0 ? (
+                  <div className="p-8 rounded-2xl bg-white border border-[#EAECF0] text-center space-y-4">
+                    <div className="w-10 h-10 mx-auto rounded-full bg-[#E6F9F5] border border-[#00B386]/20 flex items-center justify-center">
+                      <span className="w-5 h-5 border-2 border-[#00B386]/30 border-t-[#00B386] rounded-full animate-spin" />
+                    </div>
+                    <div>
+                      <h3 className="font-display font-bold text-base text-[#1E222D]">
+                        {connectionStatus || "Connecting to live service..."}
+                      </h3>
+                      <p className="text-xs text-[#7C7E8C] mt-1">
+                        Loading Smart Market Watchlist intelligence...
+                      </p>
+                    </div>
+                    <div className="space-y-3 pt-2 max-w-lg mx-auto">
+                      {[1, 2, 3].map((n) => (
+                        <div key={n} className="h-14 rounded-xl bg-[#F8F9FA] border border-[#EAECF0] animate-pulse" />
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {/* Watchlist Tabs Row with New/Manage trigger */}
+                    <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#EAECF0]">
                   {watchlists.map((wl) => (
                     <button
                       key={wl.id}
@@ -686,6 +732,8 @@ export const App: React.FC = () => {
                       ))}
                     </div>
                   )
+                )}
+                  </>
                 )}
 
                 {/* Groww Discover & Dynamic Real-Time Movers Section */}

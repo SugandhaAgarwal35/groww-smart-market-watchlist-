@@ -22,26 +22,35 @@ export const SecuritySearchModal: React.FC<SecuritySearchModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [addingId, setAddingId] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [retryStatus, setRetryStatus] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isOpen) {
       setQuery("");
       setResults([]);
       setErrorMsg(null);
+      setRetryStatus(null);
       return;
     }
 
     const timer = setTimeout(async () => {
       setIsLoading(true);
       setErrorMsg(null);
+      setRetryStatus(null);
       try {
-        const data = await api.searchSecurities(query);
+        const data = await api.searchSecurities(query, {
+          onRetry: (attempt, maxAttempts) => {
+            setRetryStatus(`Connecting to service… Retrying (${attempt}/${maxAttempts})`);
+          },
+        });
         setResults(data);
+        setErrorMsg(null);
       } catch (err) {
         console.error("Search error:", err);
         setErrorMsg((err as Error).message || "Failed to search securities");
       } finally {
         setIsLoading(false);
+        setRetryStatus(null);
       }
     }, 200);
 
@@ -105,8 +114,16 @@ export const SecuritySearchModal: React.FC<SecuritySearchModalProps> = ({
           </button>
         </div>
 
-        {/* Inline Error if any */}
-        {errorMsg && (
+        {/* Cold-start retry notification */}
+        {retryStatus && (
+          <div className="mx-4 mt-3 p-3 bg-[#E6F9F5] border border-[#00B386]/30 rounded-xl text-xs text-[#00B386] flex items-center gap-2">
+            <span className="w-3 h-3 border-2 border-[#00B386]/30 border-t-[#00B386] rounded-full animate-spin flex-shrink-0" />
+            <span>{retryStatus}</span>
+          </div>
+        )}
+
+        {/* Inline Error if any (clean message, never raw HTML) */}
+        {errorMsg && !retryStatus && (
           <div className="mx-4 mt-3 p-3 bg-[#FDF2F2] border border-[#EB5757]/30 rounded-xl text-xs text-[#EB5757] flex items-center justify-between">
             <span>{errorMsg}</span>
             <button
@@ -122,7 +139,7 @@ export const SecuritySearchModal: React.FC<SecuritySearchModalProps> = ({
         <div className="p-3 max-h-80 overflow-y-auto space-y-1 divide-y divide-[#EAECF0]/60">
           {isLoading && (
             <div className="text-center py-8 text-xs text-[#7C7E8C]">
-              Searching securities universe...
+              {retryStatus || "Searching securities universe..."}
             </div>
           )}
 
